@@ -7,6 +7,7 @@ from stanfordcorenlp import StanfordCoreNLP
 import pickle
 from collections import OrderedDict
 import sys
+from substraction_problem import SubstractionProblem
 
 
 def first_run(sentence):
@@ -44,8 +45,9 @@ def load_from_pickle(sentence):
     return tokenized, pos_tags, ner, problem
 
 
-if __name__ == "__main__":
 
+
+def  main():
     if len(sys.argv) > 1:
         sentence = sys.argv[1]
         print(sys.argv)
@@ -59,54 +61,16 @@ if __name__ == "__main__":
 
 
     tokenized, pos_tags, ner, problem = load_from_pickle(sentence)
-    print(tokenized)
-    print(pos_tags)
-    print(ner)
-    print(problem)
+    # print(tokenized)
+    # print(pos_tags)
+    # print(ner)
+    # print(problem)
+    substract = SubstractionProblem(problem)
 
-    objects = [x[0] for x in problem if x[1] == 'NNS' or x[1] == 'NN']
-    prices = [float(y[0]) for y in problem if y[1] == 'CD']
-    print(objects)
-    print(prices)
+    print(substract.solve_problem())
 
-    last_key = objects[-1]
 
-    dictionary = {}
-
-    objects = list(OrderedDict.fromkeys(objects))
-    print(objects)
-    for i in range(len(objects)):
-        dictionary[objects[i]] = prices[i]
-
-    if 'less' in tokenized:
-        # get position of less
-        index = [problem.index(x) for x in problem if x[0] == 'less'][0]
-        smaller_one = None
-        for i in reversed(range(0, index)):
-            if problem[i][1] == 'NNS' or problem[i][1] == 'NN':
-                smaller_one = problem[i][0]
-                break
-
-        bigger_one = None
-        for i in range(index, len(problem)):
-            if problem[i][1] == 'NNS' or problem[i][1] == 'NN':
-                bigger_one = problem[i][0]
-                break
-
-        if smaller_one is not None:
-            # A is $42. A is $14 less than B. How much is B?
-            # Jane spent $42 for shoes.  This was $14 less than what she spent for a blouse.  How much was the blouse?
-            # e.g., operand is 14 here
-            operand = dictionary[last_key]
-
-            if last_key != smaller_one:
-                dictionary[last_key] = operand + dictionary[smaller_one]
-            else:
-                dictionary[last_key] = dictionary[bigger_one] - operand
-
-            # Jane spent $42 for shoes.  The blouse was $14 less than what she spent for the shoes.  How much was the blouse?
-            # A is $42. B is $14 less than A. How much is B?
-
-    print(dictionary)
+if __name__ == "__main__":
+    main()
 
 
