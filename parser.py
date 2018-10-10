@@ -6,6 +6,7 @@
 from stanfordcorenlp import StanfordCoreNLP
 import pickle
 from collections import OrderedDict
+import sys
 
 
 def first_run(sentence):
@@ -44,8 +45,19 @@ def load_from_pickle(sentence):
 
 
 if __name__ == "__main__":
-    sentence = 'Jane spent $42 for shoes.  This was $14 less than what she spent for a blouse.  How much was the blouse?'
+
+    if len(sys.argv) > 1:
+        sentence = sys.argv[1]
+        print(sys.argv)
+        pickle.dump(sentence, open("sentence.p", "wb"))
+        first_run(sentence)
+
+    sentence = pickle.load(open("sentence.p", "rb"))
+
+    # sentence = 'Jane spent $42 for shoes.  This was $14 less than what she spent for a blouse.  How much was the blouse?'
     # tokenized, pos_tags, ner, problem = first_run(sentence)
+
+
     tokenized, pos_tags, ner, problem = load_from_pickle(sentence)
     print(tokenized)
     print(pos_tags)
