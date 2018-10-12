@@ -1,4 +1,5 @@
 from stanfordcorenlp import StanfordCoreNLP
+import operator
 
 current_symbol = 0
 symbols = {0: 'x', 1: 'y', 2: 'z', 3: 'w'}
@@ -14,6 +15,33 @@ class Variable:
     def __str__(self):
         return self.symbol + ': ' + str(self.value) + ' ' + self.name
 
+def generate_keyword_dictionary(csv_path):
+    keyword_dict = {}
+    sentences = open(csv_path, "r").read().split('\n')
+
+    for sentence in sentences:
+        words = sentence.split(',')
+        for i in range(len(words))[1:]:
+            keyword_dict[words[i]] = words[0]
+
+    return keyword_dict
+
+def extract_equation_type(sentence, keyword_dict):
+    hits = {'addition': 0,
+            'subtraction': 0,
+            'division': 0,
+            'multiplication': 0}
+
+    words = sentence.split(' ')
+
+    for word in words:
+        if word in keyword_dict:
+            print(f'{word}: {keywordDict[word]}')
+            hits[keywordDict[word]] += 1
+
+    print(hits)
+
+    return max(hits.items(), key=operator.itemgetter(1))[0]
 
 def get_symbol():
 
@@ -84,4 +112,8 @@ def find_variables():
     print(variables[-1])
 
 
-find_variables()
+if __name__ == "__main__":
+    sentence = "What is the total cost of the three items?"
+    keywordDict = generate_keyword_dictionary("mathProblemKeywords.csv")
+    equation_type = extract_equation_type(sentence, keywordDict)
+    print(equation_type)
