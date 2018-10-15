@@ -8,7 +8,7 @@ class AdditionProblem:
         self.sentence = sentence
         self.variables = find_variables(sentence, nlp)
 
-    def printProblem(self):
+    def print_problem(self):
         x = self.variables[0]
         y = self.variables[1]
         z = self.variables[2]
