@@ -2,7 +2,7 @@ from stanfordcorenlp import StanfordCoreNLP
 import operator
 
 current_symbol = 0
-symbols = {0: 'x', 1: 'y', 2: 'z', 3: 'w'}
+symbols = {0: 'x', 1: 'y', 2: 'z', 3: 'w', 4: 'a', 5: 'b', 6: 'c', 7: 'd', 8: 'e', 9: 'f', 10: 'g', 11: 'h', 12: 'i'}
 
 MATH_PROBLEM_KEYWORD_PATH = "mathProblemKeywords.csv"
 
