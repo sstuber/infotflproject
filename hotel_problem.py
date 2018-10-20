@@ -52,6 +52,8 @@ class HotelProblem:
 
         self.total_formulas.append(final_formula)
 
-    def print(self):
+    def print_problem(self):
         for sentence in self.total_formulas:
             print(sentence)
+
+

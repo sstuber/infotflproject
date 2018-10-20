@@ -34,7 +34,9 @@ def extract_equation_type(sentence, keyword_dict):
     hits = {'addition': 0,
             'subtraction': 0,
             'division': 0,
-            'multiplication': 0}
+            'multiplication': 0,
+            'hotel': 0
+            }
 
     words = sentence.split(' ')
 
@@ -52,6 +54,11 @@ def get_symbol():
     global current_symbol
     current_symbol += 1
     return symbols[current_symbol - 1]
+
+
+def reset_symbol_counter():
+    global current_symbol
+    current_symbol = 0
 
 
 def sublist_in_list(subList, list, index=0):
@@ -99,6 +106,7 @@ def find_variables(sentence: str = None, nlp=None):
     for sentence in sentences.split('.'):
         words = nlp.word_tokenize(sentence)
         dependencies = nlp.dependency_parse(sentence)
+
         nummods = [x for x in dependencies if x[0] == 'nummod']
         for nummod in nummods:
             symbol = get_symbol()
@@ -108,6 +116,8 @@ def find_variables(sentence: str = None, nlp=None):
 
     # Find the unknown variable
     variables.append(find_unknown_variable(sentences.split('.')[-1], nlp))
+
+    reset_symbol_counter()
 
     return variables
 
