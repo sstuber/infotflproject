@@ -3,6 +3,7 @@ from variable_finder import extract_equation_type_from_sentence, find_variables
 from addition_problem import AdditionProblem
 from division_problem import DivisionProblem
 from hotel_problem import HotelProblem
+from purchasing_problem import PurchasingProblem
 from stanfordcorenlp import StanfordCoreNLP
 from function_finder import find_more_or_less
 
@@ -33,6 +34,10 @@ def main():
 
     if equation_type == 'division':
         problem = DivisionProblem(input_sentence, nlp)
+        problem.print_problem()
+
+    if equation_type == 'purchasing':
+        problem = PurchasingProblem(input_sentence, nlp)
         problem.print_problem()
 
 

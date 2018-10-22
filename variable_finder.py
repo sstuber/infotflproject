@@ -20,7 +20,7 @@ class Variable:
 
 def generate_keyword_dictionary(csv_path):
     keyword_dict = {}
-    sentences = open(csv_path, "r").read().split('\n')
+    sentences = open(csv_path, "r", encoding='utf-8').read().split('\n')
 
     for sentence in sentences:
         words = sentence.split(',')
@@ -31,12 +31,8 @@ def generate_keyword_dictionary(csv_path):
 
 
 def extract_equation_type(sentence, keyword_dict):
-    hits = {'addition': 0,
-            'subtraction': 0,
-            'division': 0,
-            'multiplication': 0,
-            'hotel': 0
-            }
+
+    hits = dict.fromkeys(keyword_dict.values(), 0)
 
     words = sentence.split(' ')
 
@@ -75,6 +71,11 @@ def sublist_in_list(subList, list, index=0):
 
 
 def find_unknown_variable(sentence, nlp):
+    # Shouldn't this find all unknown variables, instead of just one?
+    # Therefore, here we create a list to include all.
+    # Still need to find a way to detect all the unknown variables instead of only the first.
+
+    variables = []
     words = nlp.word_tokenize(sentence)
     patterns = [(['how', 'many'], 1)]
 
@@ -89,10 +90,11 @@ def find_unknown_variable(sentence, nlp):
     # pattern_index: where in the sentence we found the pattern
 
     name = words[pattern_index + len(patterns[i - 1][0]) + patterns[i - 1][1] - 1]
-    return Variable(get_symbol(), name, "?")
+    variables.append(Variable(get_symbol(), name, "?"))
+    return variables
 
 
-def find_variables(sentence: str = None, nlp=None):
+def find_variables(sentence: str = None, nlp=None, with_unit=False):
     sentences = 'There are 1030 books in the library. We bought 67 more books for the library. How many books are there in the library now?'
     sentences = sentences.lower()
     variables = []
@@ -106,16 +108,27 @@ def find_variables(sentence: str = None, nlp=None):
     for sentence in sentences.split('.'):
         words = nlp.word_tokenize(sentence)
         dependencies = nlp.dependency_parse(sentence)
-
+        if with_unit:
+            pos_tag = nlp.pos_tag(sentence)
         nummods = [x for x in dependencies if x[0] == 'nummod']
         for nummod in nummods:
             symbol = get_symbol()
-            name = words[nummod[1] - 1]
+
+            # Find variables in problems with unit
+            # (e.g., spades cost 16 € each, the variable is 'spades' instead of the unit '€')
+            if with_unit and len([x for x in pos_tag if x[1] == '$']) > 0 and 'together' not in words:
+                for x in reversed(pos_tag[:nummod[1]-1]):
+                    if x[1] == 'NNS' or x[1] == 'NNP' or x[1] == 'NN':
+                        name = x[0]
+                        break
+            else:
+                name = words[nummod[1] - 1]
             value = int(words[nummod[2] - 1])
             variables.append(Variable(symbol, name, value))
 
     # Find the unknown variable
-    variables.append(find_unknown_variable(sentences.split('.')[-1], nlp))
+    # Now uses extend instead of append; find_unknown_variable returns a list
+    variables.extend(find_unknown_variable(sentences.split('.')[-1], nlp))
 
     reset_symbol_counter()
 
