@@ -7,6 +7,7 @@ class HotelProblem:
     def __init__(self,sentence, nlp=None):
         self.sentence = sentence
         self.variables = find_variables(sentence, nlp)
+        self.nlp = nlp
 
         self.total_hotels = self.variables.pop(0).value
 
@@ -16,9 +17,10 @@ class HotelProblem:
         for i in range(self.total_hotels):
             self.variable_dict[i+1] = symbols[i]
 
-        formula_functions = find_more_or_less(sentence, nlp)
+        first_plural_noun, first_singular_noun = self.get_variable_nouns()
 
         self.formatted_formulas = []
+        formula_functions = find_more_or_less(sentence, nlp)
 
         # create formula's of the 8 more in a than b
         for i in range(len(formula_functions)):
@@ -27,8 +29,8 @@ class HotelProblem:
             # filter on sentence
             current_variables = self.variables[i*3:(i+1)*3]
 
-            tourist_var = [x for x in current_variables if x.name == 'tourists'][0]
-            hotel_vars = [x for x in current_variables if x.name == 'hotel']
+            tourist_var = [x for x in current_variables if x.name == first_plural_noun][0]
+            hotel_vars = [x for x in current_variables if x.name == first_singular_noun]
 
             hotelvar1 = self.variable_dict[hotel_vars[0].value]
             hotelvar2 = self.variable_dict[hotel_vars[1].value]
@@ -39,6 +41,26 @@ class HotelProblem:
 
         # format the final result
         self.format_result_formulas()
+
+    def get_variable_nouns(self):
+
+        pos_tags = self.nlp.pos_tag(self.sentence)
+
+        nouns = list(filter(lambda x: x[1] == 'NNS' or x[1] == 'NN', pos_tags))
+
+        first_plural_noun = None
+        for noun in nouns:
+            if noun[1] == 'NNS':
+                first_plural_noun = noun[0]
+                break
+
+        first_singular_noun = None
+        for noun in nouns:
+            if noun[1] == 'NN':
+                first_singular_noun = noun[0]
+                break
+
+        return first_plural_noun,first_singular_noun
 
     def print_problem(self):
         for sentence in self.formatted_formulas:
