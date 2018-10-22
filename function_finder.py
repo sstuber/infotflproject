@@ -31,6 +31,8 @@ def find_more_or_less(sentence, nlp = None):
             selected_function = variable_dict['more']
             variable_function_funcitons.append(selected_function)
 
+    return variable_function_funcitons
+
 
 def more_than_function(variable_name1, variable_name2, value):
 
