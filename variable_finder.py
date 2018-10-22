@@ -119,8 +119,10 @@ def find_variables(sentence: str = None, nlp=None, with_unit=False):
             if with_unit and len([x for x in pos_tag if x[1] == '$']) > 0 and 'together' not in words:
                 for x in reversed(pos_tag[:nummod[1]-1]):
                     if x[1] == 'NNS' or x[1] == 'NNP' or x[1] == 'NN':
-                        name = x[0]
+                        name = f'{words[nummod[1] - 1]}/{x[0]}'
                         break
+            elif with_unit and len([x for x in pos_tag if x[1] == '$']) > 0 and 'together' in words:
+                name = words[nummod[1] - 1] + ' total'
             else:
                 name = words[nummod[1] - 1]
             value = int(words[nummod[2] - 1])
