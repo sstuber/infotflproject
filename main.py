@@ -6,6 +6,7 @@ from hotel_problem import HotelProblem
 from purchasing_problem import PurchasingProblem
 from stanfordcorenlp import StanfordCoreNLP
 from function_finder import find_more_or_less
+from substraction_problem import SubstractionProblem
 
 # The tourists are accommodated in 3 hotels. There are 8 less tourists in hotel 2 than in hotel 1 and in hotel 3 there are 14 more tourists than in hotel 2. If there is a total of 258 tourists, how many tourists are accommodated in each of the hotels ?
 
@@ -30,6 +31,10 @@ def main():
 
     if equation_type == 'addition':
         problem = AdditionProblem(input_sentence, nlp)
+        problem.print_problem()
+
+    if equation_type == 'subtraction':
+        problem = SubstractionProblem(input_sentence, nlp)
         problem.print_problem()
 
     if equation_type == 'division':
