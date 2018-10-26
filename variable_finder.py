@@ -94,7 +94,7 @@ def find_unknown_variable(sentence, nlp):
     return variables
 
 
-def find_variables(sentence: str = None, nlp=None, with_unit=False):
+def find_variables(sentence: str = None, nlp=None, with_unit=False, with_percent=False):
     sentences = 'There are 1030 books in the library. We bought 67 more books for the library. How many books are there in the library now?'
     sentences = sentences.lower()
     variables = []
@@ -108,7 +108,7 @@ def find_variables(sentence: str = None, nlp=None, with_unit=False):
     for sentence in sentences.split('.'):
         words = nlp.word_tokenize(sentence)
         dependencies = nlp.dependency_parse(sentence)
-        if with_unit:
+        if with_unit or with_percent:
             pos_tag = nlp.pos_tag(sentence)
         nummods = [x for x in dependencies if x[0] == 'nummod']
         for nummod in nummods:
@@ -123,9 +123,22 @@ def find_variables(sentence: str = None, nlp=None, with_unit=False):
                         break
             elif with_unit and len([x for x in pos_tag if x[1] == '$']) > 0 and 'together' in words:
                 name = words[nummod[1] - 1] + ' total'
+            elif with_percent and len([x for x in pos_tag if x[0] == '%']) > 1: # Second sentence (with 2 %)
+                for x in pos_tag[nummod[1]:]:
+                    if x[1] == 'NNS' or x[1] == 'NNP' or x[1] == 'NN':
+                        name = f'{words[nummod[1] - 1]} of {x[0]}'
+                        break
+            elif with_percent and len([x for x in pos_tag if x[0] == '%']) > 0: # Third sentence (with only one %)
+                for x in reversed(pos_tag[:nummod[1]-1]):
+                    if x[1] == 'NNS' or x[1] == 'NNP' or x[1] == 'NN':
+                        name = f'{words[nummod[1] - 1]} of {x[0]}'
+                        break
             else:
                 name = words[nummod[1] - 1]
-            value = int(words[nummod[2] - 1])
+            if ',' in words[nummod[2] - 1]:
+                value = float(words[nummod[2] - 1].replace(',','.'))
+            else:
+                value = int(words[nummod[2] - 1])
             variables.append(Variable(symbol, name, value))
 
     # Find the unknown variable
