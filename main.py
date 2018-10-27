@@ -31,29 +31,37 @@ def main():
         problem = HotelProblem(input_sentence, nlp)
         problem.print_problem()
 
-    if equation_type == 'addition':
+    elif equation_type == 'addition':
         problem = AdditionProblem(input_sentence, nlp)
         problem.print_problem()
 
-    if equation_type == 'subtraction':
+    elif equation_type == 'subtraction':
         problem = SubstractionProblem(input_sentence, nlp)
         problem.print_problem()
 
-    if equation_type == 'division':
+    elif equation_type == 'division':
         problem = DivisionProblem(input_sentence, nlp)
         problem.print_problem()
 
-    if equation_type == 'multiplication':
+    elif equation_type == 'multiplication':
         problem = MultiplicationProblem(input_sentence, nlp)
         problem.print_problem()
 
-    if equation_type == 'purchasing':
+    elif equation_type == 'purchasing':
         problem = PurchasingProblem(input_sentence, nlp)
         problem.print_problem()
 
-    if equation_type == 'proportion':
+    elif equation_type == 'proportion':
         problem = ProportionProblem(input_sentence, nlp)
         problem.print_problem()
+
+    elif equation_type == 'train':
+        problem = TrainProblem(input_sentence, nlp)
+        problem.print_problem()
+
+    else:
+        print(f"The sentence is of type {equation_type} problem, but that is not yet supported by the system")
+
 
 
 if __name__ == '__main__':
