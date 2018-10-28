@@ -16,6 +16,9 @@ class Variable:
 
     def __str__(self):
         return self.symbol + ': ' + str(self.value) + ' ' + self.name
+        
+    def __repr__(self):
+        return self.__str__()
 
 
 def generate_keyword_dictionary(csv_path):
@@ -77,7 +80,7 @@ def find_unknown_variable(sentence, nlp):
 
     variables = []
     words = nlp.word_tokenize(sentence)
-    patterns = [(['how', 'many'], 1)]
+    patterns = [(['how', 'many'], 1), (['what', 'time'], 2), (['how', 'far'], 3)]
 
     # try and find one of our patterns in the sentence
     for pattern, i in patterns:
@@ -95,8 +98,8 @@ def find_unknown_variable(sentence, nlp):
 
 
 def find_variables(sentence: str = None, nlp=None, with_unit=False, with_percent=False):
-    sentences = 'There are 1030 books in the library. We bought 67 more books for the library. How many books are there in the library now?'
-    sentences = sentences.lower()
+#    sentences = 'There are 1030 books in the library. We bought 67 more books for the library. How many books are there in the library now?'
+#    sentences = sentences.lower()
     variables = []
     if sentence is not None:
         sentences = sentence.lower()

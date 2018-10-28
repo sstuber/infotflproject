@@ -5,6 +5,7 @@ from division_problem import DivisionProblem
 from hotel_problem import HotelProblem
 from purchasing_problem import PurchasingProblem
 from proportion_problem import ProportionProblem
+from train_problem import TrainProblem
 from stanfordcorenlp import StanfordCoreNLP
 from function_finder import find_more_or_less
 from substraction_problem import SubstractionProblem
