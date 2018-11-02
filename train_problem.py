@@ -10,7 +10,14 @@ Restrictions:
 
 Example:
     A local train has departed from the station A at ten o'clock with the speed of 55 km/h. 1,5 h later an express has departed from the station B, which is 360 km far from the station A, and it went toward the local train with the speed of 130 km/h. At what time and how far from the station A will the trains meet ?
-    The distance between towns A and B is 42 km. A pedestrian leaves town A with a speed of 6 km/h, to the opposite direction from town B. A cyclist leaves town B 0,5 h later than the pedestrian with a speed of 24 km/h. In how many hours is the cyclist going to reach the pedestrian and what is going to be his distance from town B ?
+    Variation: A local train has departed from the station A at ten o'clock with the speed of 55 km/h. An express has departed from the station B, which is 360 km far from the station A, and it went toward the local train with the speed of 130 km/h. At what time and how far from the station A will the trains meet ?
+    Variation: A local train has departed from the station A at ten o'clock with the speed of 55 km/h. 1,5 h later an express has departed from the station B, and it went toward the local train with the speed of 130 km/h. At what time and how far from the station A will the trains meet ?
+    Variation: A local train has departed from the station A at ten o'clock with the speed of 55 km/h. An express has departed from the station B, which is 360 km far from the station A, and it went toward the local train with the speed of 130 km/h. How far from the station A will the trains meet ?
+    Variation: A local train has departed from the station A at ten o'clock with the speed of 55 km/h. An express has departed from the station B, which is 360 km far from the station A, and it went toward the local train with the speed of 130 km/h. At what time will the trains meet ?
+    DOESN'T WORK YET: The distance between towns A and B is 42 km. A pedestrian leaves town A with a speed of 6 km/h, to the opposite direction from town B. A cyclist leaves town B 0,5 h later than the pedestrian with a speed of 24 km/h. In how many hours is the cyclist going to reach the pedestrian and what is going to be his distance from town B ?
+        # Issues:
+            Detect "what is going to be his distance" as a question (too long)
+            Detect town B as point of reference
     
 """
 
@@ -45,7 +52,7 @@ class TrainProblem:
                 time_meeting = variable
             elif name == "distance":
                 distance_meeting = variable
-       
+        assert len(trains) == 2
         assert time_difference or initial_distance
        
 
@@ -66,7 +73,8 @@ class TrainProblem:
 #            distance_meeting = Variable(get_symbol(), "distance", "(auxiliar)")
 
         self.formatted_formulas.append(str(time_meeting))
-        self.formatted_formulas.append(str(distance_meeting))
+        if distance_meeting:
+            self.formatted_formulas.append(str(distance_meeting))
 
 
         self.formatted_formulas.append("# Solution #")        
@@ -97,6 +105,8 @@ class TrainProblem:
         # The trains meet when they are at the same position    
         self.formatted_formulas.append(f"{e1} = {e2}")
         
+        
+        """
         # Isolate time
         t2_symbol_neg = f"{trains[1].symbol}"
         e1 = f"{t1_meeting_distance} - ({t2_meeting_distance})"
@@ -116,13 +126,14 @@ class TrainProblem:
         e1 = f"{time_meeting.symbol}"
         e2 = f"({e2})/({sum_speeds})"
         self.formatted_formulas.append(f"{e1} = {e2}")
+        """
         
     def print_problem(self):
         for sentence in self.formatted_formulas:
             print(sentence)
 
     def find_questions(self):
-        words = self.nlp.word_tokenize(self.sentence)
+        words = self.nlp.word_tokenize(self.sentence.lower())
         
         for variable in self.variables:
             # Advance symbol counter (TODO find questions together with variables)
@@ -139,7 +150,6 @@ class TrainProblem:
             pattern_index = sublist_in_list(pattern.split(" "), words)
             if pattern_index != -1:
                 questions.append(Variable(get_symbol(), patterns[pattern], "?"))
-        
         return questions
         
         

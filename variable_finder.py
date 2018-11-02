@@ -1,5 +1,6 @@
 from stanfordcorenlp import StanfordCoreNLP
 import operator
+from string import punctuation as string_punctuation
 
 current_symbol = 0
 symbols = {0: 'x', 1: 'y', 2: 'z', 3: 'w', 4: 'a', 5: 'b', 6: 'c', 7: 'd', 8: 'e', 9: 'f', 10: 'g', 11: 'h', 12: 'i'}
@@ -37,7 +38,8 @@ def extract_equation_type(sentence, keyword_dict):
 
     hits = dict.fromkeys(keyword_dict.values(), 0)
 
-    words = sentence.split(' ')
+    removal_table = str.maketrans(dict.fromkeys(string_punctuation))
+    words = sentence.lower().translate(removal_table).strip().split(" ")
 
     for word in words:
         if word in keyword_dict:
